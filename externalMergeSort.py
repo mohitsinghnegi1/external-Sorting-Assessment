@@ -9,7 +9,9 @@ class externalSorting(object):
         self.fout=None
 
     def printTemporaryFiles(self):
+        print "-------- temporary files ---------"
         file_number=1
+        
         #here we are using each file discriptor and reaing content of each file
         #after that we are moving to pos 0
         for i in self.sorted_file_handlers:
@@ -20,8 +22,11 @@ class externalSorting(object):
         print ""
 
     def printSotedOutputFile(self):
+        print "-------- output file ---------"
         
-        print self.fout.read()
+        for i in self.fout:
+            print i.strip()
+        
         print ""
     
     def splitFilesInSorted(self,input_file,chunck_size):
@@ -48,9 +53,9 @@ class externalSorting(object):
                     temp_buffer.sort(key=lambda x: x.strip())
                     
                     #a new file will be createdss
-                    fh1=tempfile.NamedTemporaryFile(dir=self.cwd+'/temp',delete=False)
+                    fh1=tempfile.NamedTemporaryFile(dir=self.cwd+'/temp',delete=True)
                     fh1.writelines(temp_buffer)
-                    print temp_buffer
+                    #print temp_buffer
                     #this will create a chunk file with sorted data
                     fh1.seek(0)
                     self.sorted_file_handlers.append(fh1)
@@ -78,13 +83,18 @@ class externalSorting(object):
         while(min_array!=[]):
             fout.write(heapq.heappop(min_array))
             fout.write("\n")
+
+        for i in self.sorted_file_handlers:
+            i.close();
+        print self.sorted_file_handlers.read()
+        
         fout.seek(0)
         self.fout=fout
         
 
 if __name__=='__main__':
-    input_file='inputFile.txt'
-    chunck_size=3
+    input_file='inputFile1.txt'
+    chunck_size=30000
     obj=externalSorting()#create object form 
     obj.splitFilesInSorted(input_file,chunck_size)
 
